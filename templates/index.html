@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gesture Detection Breakthrough</title>
+    <title>EmotionAI - Detección de Estados de Ánimo</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <style>
@@ -51,18 +51,17 @@
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
         }
     </style>
-    
 </head>
 <body class="bg-custom min-h-screen">
     <div class="container mx-auto px-4 py-8">
         <div class="title-container text-center">
-            <h1 class="text-4xl font-bold">Sistema de deteccion de analisis de estados de animo EmotionAI</h1>
+            <h1 class="text-4xl font-bold">Sistema de detección de análisis de estados de ánimo - EmotionAI</h1>
         </div>
 
         <div class="max-w-2xl mx-auto bg-gray-800 rounded-lg shadow-lg p-6">
             <div class="flex flex-col md:flex-row">
                 <div class="md:w-1/2 mb-8 pr-4">
-                    <h2 class="text-2xl font-semibold mb-4">Subir tu imagen o fotografía</h2>
+                    <h2 class="text-2xl font-semibold mb-4">Sube tu imagen</h2>
                     <form id="uploadForm" class="space-y-4">
                         <div class="flex items-center justify-center w-full">
                             <label class="flex flex-col w-full h-32 border-4 border-dashed border-gray-600 hover:bg-gray-700">
@@ -70,12 +69,12 @@
                                     <svg xmlns="http://www.w3.org/2000/svg" class="w-12 h-12 text-gray-400 group-hover:text-gray-300" viewBox="0 0 20 20" fill="currentColor">
                                         <path fill-rule="evenodd" d="M4 3a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V5a2 2 0 00-2-2H4zm12 12H4l4-8 3 6 2-4 3 6z" clip-rule="evenodd" />
                                     </svg>
-                                    <p class="pt-1 text-sm tracking-wider text-gray-400 group-hover:text-gray-300">Seleccione una imagen</p>
+                                    <p class="pt-1 text-sm tracking-wider text-gray-400 group-hover:text-gray-300">Selecciona una imagen</p>
                                 </div>
                                 <input type="file" class="opacity-0" name="file" accept=".jpg,.jpeg,.png" />
                             </label>
                         </div>
-                        <button type="submit" class="btn-custom w-full">Analizar Fotografía o imagen</button>
+                        <button type="submit" class="btn-custom w-full">Analizar Imagen</button>
                     </form>
 
                     <div id="progressSection" class="hidden mb-4">
@@ -95,29 +94,10 @@
                 </div>
 
                 <div class="md:w-1/2 mb-8 pl-4">
-                    <h2 class="text-2xl font-semibold mb-4">Resultados de la detección de emociones con IA</h2>
+                    <h2 class="text-2xl font-semibold mb-4">Resultado de la detección</h2>
                     <div id="results" class="hidden border-custom border rounded-lg p-4">
                         <img id="resultImage" class="max-w-full h-auto mx-auto" src="" alt="Resultado del Análisis">
                     </div>
-
-                    {% if images %}
-                    <div class="mt-8">
-                        <h2 class="text-2xl font-semibold mb-4">Análisis previos</h2>
-                        <div class="grid grid-cols-2 md:grid-cols-3 gap-4">
-                            {% for image in images %}
-                            <div class="relative group">
-                                <img src="{{ url_for('static', filename='uploads/' + image) }}" 
-                                    alt="{{ image }}" 
-                                    class="w-full h-32 object-cover rounded-lg cursor-pointer hover:opacity-75 transition-opacity"
-                                    onclick="analyzeExisting('{{ image }}')">
-                                <div class="absolute bottom-0 left-0 right-0 bg-black bg-opacity-50 text-white text-xs p-1 rounded-b-lg truncate">
-                                    {{ image }}
-                                </div>
-                            </div>
-                            {% endfor %}
-                        </div>
-                    </div>
-                    {% endif %}
                 </div>
             </div>
         </div>
@@ -169,39 +149,6 @@
                 });
             });
         });
-
-        function analyzeExisting(filename) {
-            toggleElements(true);
-            const formData = new FormData();
-            formData.append('existing_file', filename);
-
-            $.ajax({
-                url: '/analyze',
-                type: 'POST',
-                data: formData,
-                contentType: false,
-                processData: false,
-                xhr: function() {
-                    const xhr = new window.XMLHttpRequest();
-                    xhr.upload.addEventListener("progress", function(evt) {
-                        if (evt.lengthComputable) {
-                            const percentComplete = (evt.loaded / evt.total) * 100;
-                            updateProgress(percentComplete);
-                        }
-                    }, false);
-                    return xhr;
-                },
-                success: function(response) {
-                    toggleElements(false);
-                    $('#results').removeClass('hidden');
-                    $('#resultImage').attr('src', `data:image/png;base64,${response.image}`);
-                    updateProgress(100);
-                },
-                error: function(xhr) {
-                    toggleElements(false, true, xhr.responseJSON?.error || 'Ocurrió un error');
-                }
-            });
-        }
     </script>
 </body>
 </html>
